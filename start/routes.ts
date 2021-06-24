@@ -29,9 +29,14 @@ Route.post('login', async ({ auth, request, response }) => {
   const password = request.input('password')
 
   try {
-    const token = await auth.use('api').attempt(email, password)
+    const token = await auth.use('api').attempt(email, password, {
+      expiresIn: '7days',
+    })
+
     return token
   } catch {
     return response.badRequest('Invalid credentials')
   }
 })
+
+Route.resource('users', 'UsersController')

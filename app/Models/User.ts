@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel, afterFind } from '@ioc:Adonis/Lucid/Orm'
+import { column, beforeSave, BaseModel, afterFind, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import discord from 'Config/discord'
+import Rule from './Rule'
 
 interface Role {
   id: string
@@ -32,6 +33,9 @@ export default class User extends BaseModel {
 
   @column()
   public roles: Role[]
+
+  @hasMany(() => Rule)
+  public rules: HasMany<typeof Rule>
 
   @beforeSave()
   public static async hashPassword(user: User) {

@@ -1,6 +1,14 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel, afterFind, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
+import {
+  column,
+  beforeSave,
+  BaseModel,
+  afterFind,
+  hasMany,
+  HasMany,
+  computed,
+} from '@ioc:Adonis/Lucid/Orm'
 import discord from 'Config/discord'
 import Rule from './Rule'
 
@@ -31,7 +39,7 @@ export default class User extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  @column()
+  @computed()
   public roles: Role[]
 
   @hasMany(() => Rule)

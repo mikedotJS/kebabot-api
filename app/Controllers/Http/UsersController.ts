@@ -6,6 +6,8 @@ export default class UsersController {
   public async show(ctx: HttpContextContract) {
     const user = await User.findBy('id', ctx.params.id)
 
+    await user?.load('rules')
+
     return user
   }
 

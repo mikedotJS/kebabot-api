@@ -1,10 +1,12 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, HasOne, hasOne } from '@ioc:Adonis/Lucid/Orm'
-import User from './User'
+import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
 export default class Rule extends BaseModel {
   @column({ isPrimary: true })
   public id: number
+
+  @column()
+  public type: string
 
   @column()
   public reaction: string
@@ -12,8 +14,8 @@ export default class Rule extends BaseModel {
   @column()
   public role: string
 
-  @hasOne(() => User)
-  public user: HasOne<typeof User>
+  @column()
+  public userId: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

@@ -40,3 +40,7 @@ Route.post('login', async ({ auth, request, response }) => {
 })
 
 Route.resource('users', 'UsersController')
+
+Route.resource('rules', 'RulesController').middleware({
+  '*': ['auth'],
+})

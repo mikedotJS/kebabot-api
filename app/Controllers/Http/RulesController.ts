@@ -3,7 +3,6 @@ import { rules, schema } from '@ioc:Adonis/Core/Validator';
 
 export default class RulesController {
   public async store(ctx: HttpContextContract) {
-    console.log(ctx.auth.user)
     if (!ctx.auth.user) return
 
     const storeRuleSchema = schema.create({

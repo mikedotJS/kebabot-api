@@ -35,7 +35,6 @@ export default class UsersController {
   }
 
   public async update(ctx: HttpContextContract) {
-    console.log(ctx.auth.isLoggedIn)
     if (!ctx.auth.user) return
     const updateUserSchema = schema.create({
       guildId: schema.string({}, [rules.required()]),

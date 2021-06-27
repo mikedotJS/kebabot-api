@@ -1,5 +1,6 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { DateTime } from 'luxon';
+
+import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm';
 
 export default class Rule extends BaseModel {
   @column({ isPrimary: true })

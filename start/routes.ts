@@ -18,7 +18,7 @@
 |
 */
 
-import Route from '@ioc:Adonis/Core/Route'
+import Route from '@ioc:Adonis/Core/Route';
 
 Route.get('/', async () => {
   return { hello: 'world' }
@@ -39,7 +39,9 @@ Route.post('login', async ({ auth, request, response }) => {
   }
 })
 
-Route.resource('users', 'UsersController')
+Route.resource('users', 'UsersController').middleware({
+  '*': ['auth'],
+})
 
 Route.resource('rules', 'RulesController').middleware({
   '*': ['auth'],

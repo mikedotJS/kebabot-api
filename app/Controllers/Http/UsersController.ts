@@ -1,6 +1,7 @@
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import User from 'App/Models/User'
-import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import User from 'App/Models/User';
+
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import { rules, schema } from '@ioc:Adonis/Core/Validator';
 
 export default class UsersController {
   public async show(ctx: HttpContextContract) {
@@ -29,6 +30,20 @@ export default class UsersController {
       password,
       guildId,
     })
+
+    return user
+  }
+
+  public async update(ctx: HttpContextContract) {
+    console.log(ctx.auth.isLoggedIn)
+    if (!ctx.auth.user) return
+    const updateUserSchema = schema.create({
+      guildId: schema.string({}, [rules.required()]),
+    })
+
+    const { guildId } = await ctx.request.validate({ schema: updateUserSchema })
+
+    const user = await ctx.auth.user.merge({ guildId }).save()
 
     return user
   }

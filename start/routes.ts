@@ -18,7 +18,7 @@
 |
 */
 
-import Route from '@ioc:Adonis/Core/Route';
+import Route from '@ioc:Adonis/Core/Route'
 
 Route.get('/', async () => {
   return { hello: 'world' }
@@ -33,7 +33,7 @@ Route.post('login', async ({ auth, request, response }) => {
       expiresIn: '7days',
     })
 
-    return token
+    return { token, user: auth.user }
   } catch {
     return response.badRequest('Invalid credentials')
   }

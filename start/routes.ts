@@ -39,10 +39,13 @@ Route.post('login', async ({ auth, request, response }) => {
   }
 })
 
-Route.resource('users', 'UsersController').middleware({
-  '*': ['auth'],
-})
-
-Route.resource('rules', 'RulesController').middleware({
-  '*': ['auth'],
-})
+Route.group(() => {
+  Route.resource('users', 'UsersController').middleware({
+    destroy: ['auth'],
+    index: ['auth'],
+    show: ['auth'],
+    update: ['auth'],
+  })
+  Route.resource('reactionRolesRules', 'ReactionRolesRulesController').middleware({ '*': ['auth'] })
+  Route.resource('reactionRoles', 'ReactionRolesController').middleware({ '*': ['auth'] })
+}).prefix('/api')

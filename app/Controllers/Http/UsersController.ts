@@ -2,12 +2,14 @@ import User from 'App/Models/User'
 
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
+import ReactionRolesRule from 'App/Models/ReactionRolesRule'
+import ReactionRole from 'App/Models/ReactionRole'
 
 export default class UsersController {
   public async show(ctx: HttpContextContract) {
     const user = await User.findBy('id', ctx.params.id)
 
-    await user?.load('rules')
+    await user?.load('reactionRolesRule')
 
     return user
   }
@@ -45,5 +47,46 @@ export default class UsersController {
     const user = await ctx.auth.user.merge({ guildId }).save()
 
     return user
+  }
+
+  public async addReactionRole(ctx: HttpContextContract) {
+    if (!ctx.auth.user) return
+
+    const addReactionRoleUserSchema = schema.create({
+      reactionId: schema.string({}, [rules.required()]),
+      roleDiscordId: schema.string({}, [rules.required()]),
+    })
+
+    const { reactionId, roleDiscordId } = await ctx.request.validate({
+      schema: addReactionRoleUserSchema,
+    })
+
+    const user = ctx.auth.user
+
+    const reactionRolesRule = await ReactionRolesRule.findBy('user_id', user.id)
+
+    const reactionRole = await reactionRolesRule
+      ?.related('reactionRoles')
+      .create({ reactionId, roleDiscordId })
+
+    return reactionRole
+  }
+
+  public async deleteReactionRole(ctx: HttpContextContract) {
+    if (!ctx.auth.user) return
+
+    const deleteReactionRoleSchema = schema.create({
+      reactionRoleId: schema.number([rules.required()]),
+    })
+
+    const { reactionRoleId } = await ctx.request.validate({
+      schema: deleteReactionRoleSchema,
+    })
+
+    const reactionRole = await ReactionRole.find(reactionRoleId)
+
+    await reactionRole?.delete()
+
+    return reactionRole
   }
 }

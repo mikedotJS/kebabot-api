@@ -5,12 +5,13 @@ import {
   beforeSave,
   BaseModel,
   afterFind,
-  hasMany,
-  HasMany,
   computed,
+  hasOne,
+  HasOne,
+  afterSave,
 } from '@ioc:Adonis/Lucid/Orm'
 import discord from 'Config/discord'
-import Rule from './Rule'
+import ReactionRolesRule from './ReactionRolesRule'
 
 interface Role {
   id: string
@@ -42,14 +43,19 @@ export default class User extends BaseModel {
   @computed()
   public roles: Role[]
 
-  @hasMany(() => Rule)
-  public rules: HasMany<typeof Rule>
+  @hasOne(() => ReactionRolesRule)
+  public reactionRolesRule: HasOne<typeof ReactionRolesRule>
 
   @beforeSave()
   public static async hashPassword(user: User) {
     if (user.$dirty.password) {
       user.password = await Hash.make(user.password)
     }
+  }
+
+  @afterSave()
+  public static async createReactionRoleRule(user: User) {
+    await user.related('reactionRolesRule').create({ message: '' })
   }
 
   @afterFind()

@@ -1,22 +1,19 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
-export default class Rules extends BaseSchema {
-  protected tableName = 'rules'
+export default class ReactionRolesRule extends BaseSchema {
+  protected tableName = 'reaction_roles_rules'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-
-      table.string('type').notNullable()
-      table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE')
-      table.string('reaction')
-      table.string('role')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
+      table.integer('user_id').unsigned().references('users.id').onDelete('CASCADE')
+      table.string('message')
     })
   }
 

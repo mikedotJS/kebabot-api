@@ -33,13 +33,18 @@ Route.post('login', async ({ auth, request, response }) => {
       expiresIn: '7days',
     })
 
-    return { token, user: auth.user }
+    await auth.user?.load('reactionRolesRules', (reactionRolesRulesQuery) =>
+      reactionRolesRulesQuery.preload('reactionRoles')
+    )
+
+    return token
   } catch {
     return response.badRequest('Invalid credentials')
   }
 })
 
 Route.group(() => {
+  Route.get('viewer', 'UsersController.viewer').middleware('auth')
   Route.resource('users', 'UsersController').middleware({
     destroy: ['auth'],
     index: ['auth'],

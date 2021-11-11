@@ -21,6 +21,9 @@ export default class ReactionRole extends BaseModel {
   @column()
   public reactionRolesRuleId: number
 
+  @column()
+  public reactionSymbol: string
+
   @belongsTo(() => ReactionRolesRule)
   public reactionRolesRule: BelongsTo<typeof ReactionRolesRule>
 }

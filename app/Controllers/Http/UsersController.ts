@@ -6,10 +6,22 @@ import ReactionRolesRule from 'App/Models/ReactionRolesRule'
 import ReactionRole from 'App/Models/ReactionRole'
 
 export default class UsersController {
+  public async viewer(ctx: HttpContextContract) {
+    await ctx.auth.authenticate()
+
+    await ctx.auth.user?.load('reactionRolesRules', (reactionRolesRulesModel) => {
+      reactionRolesRulesModel.preload('reactionRoles')
+    })
+
+    return ctx.auth.user
+  }
+
   public async show(ctx: HttpContextContract) {
     const user = await User.findBy('id', ctx.params.id)
 
-    await user?.load('reactionRolesRule')
+    await user?.load('reactionRolesRules', (reactionRolesRulesQuery) => {
+      reactionRolesRulesQuery.preload('reactionRoles')
+    })
 
     return user
   }

@@ -22,6 +22,9 @@ export default class ReactionRolesRule extends BaseModel {
   @column()
   public userId: number
 
+  @column()
+  public channelId: string
+
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>
 }

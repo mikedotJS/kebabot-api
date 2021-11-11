@@ -6,12 +6,12 @@ import {
   BaseModel,
   afterFind,
   computed,
-  hasOne,
-  HasOne,
-  afterSave,
+  HasMany,
+  hasMany,
 } from '@ioc:Adonis/Lucid/Orm'
 import discord from 'Config/discord'
 import ReactionRolesRule from './ReactionRolesRule'
+import { Channel } from 'discord.js'
 
 interface Role {
   id: string
@@ -43,19 +43,17 @@ export default class User extends BaseModel {
   @computed()
   public roles: Role[]
 
-  @hasOne(() => ReactionRolesRule)
-  public reactionRolesRule: HasOne<typeof ReactionRolesRule>
+  @computed()
+  public channels: Channel[]
+
+  @hasMany(() => ReactionRolesRule)
+  public reactionRolesRules: HasMany<typeof ReactionRolesRule>
 
   @beforeSave()
   public static async hashPassword(user: User) {
     if (user.$dirty.password) {
       user.password = await Hash.make(user.password)
     }
-  }
-
-  @afterSave()
-  public static async createReactionRoleRule(user: User) {
-    await user.related('reactionRolesRule').create({ message: '' })
   }
 
   @afterFind()
@@ -67,5 +65,14 @@ export default class User extends BaseModel {
       .map(({ id, name }) => ({ id, name }))
 
     user.roles = roles
+  }
+
+  @afterFind()
+  public static async fetchChannels(user: User) {
+    const guild = await discord.guilds.fetch(user.guildId)
+
+    const channels = guild.channels.cache.array().filter(({ type }) => type === 'text')
+
+    user.channels = channels
   }
 }

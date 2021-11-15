@@ -45,6 +45,7 @@ Route.post('login', async ({ auth, request, response }) => {
 
 Route.group(() => {
   Route.get('viewer', 'UsersController.viewer').middleware('auth')
+  Route.get('rules/:guildId', 'UsersController.getRules')
   Route.resource('users', 'UsersController').middleware({
     destroy: ['auth'],
     index: ['auth'],

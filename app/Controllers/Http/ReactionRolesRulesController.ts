@@ -20,24 +20,32 @@ export default class ReactionRolesRulesController {
       channelId: schema.string({}, []),
     })
 
-    const { message, channelId, reactionRoles, id } = await ctx.request.validate({
+    const { message, channelId, reactionRoles } = await ctx.request.validate({
       schema: updateReactionRolesRuleSchema,
     })
 
-    try {
-      await ReactionRole.updateOrCreateMany(
-        ['reactionId', 'roleDiscordId'],
-        reactionRoles.map((reactionRole) => ({ ...reactionRole, reactionRolesRuleId: id }))
-      )
+    const reactionRolesRule = await ReactionRolesRule.updateOrCreate(
+      { channelId },
+      { message, channelId, userId: ctx.auth.user.id }
+    )
 
-      const reactionRoleIds = reactionRoles.map((reactionRole) => reactionRole.id)
+    try {
+      const reactionRoleIds = reactionRoles.map((reactionRole) => reactionRole.id).filter(Boolean)
 
       // @ts-ignore
       await ReactionRole.query().whereNotIn('id', reactionRoleIds).delete()
+
+      await ReactionRole.updateOrCreateMany(
+        ['reactionId', 'roleDiscordId'],
+        reactionRoles.map((reactionRole) => ({
+          ...reactionRole,
+          reactionRolesRuleId: reactionRolesRule.id,
+        }))
+      )
     } catch (err) {
       console.error(err)
     }
 
-    return ReactionRolesRule.updateOrCreate({ channelId }, { message, channelId })
+    return reactionRolesRule
   }
 }

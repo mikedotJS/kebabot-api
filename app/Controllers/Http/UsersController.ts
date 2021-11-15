@@ -26,6 +26,16 @@ export default class UsersController {
     return user
   }
 
+  public async getRules(ctx: HttpContextContract) {
+    const user = await User.findBy('guild_id', ctx.params.guildId)
+
+    await user?.load('reactionRolesRules', (reactionRolesRulesQuery) => {
+      reactionRolesRulesQuery.preload('reactionRoles')
+    })
+
+    return { reactionRoles: user?.reactionRolesRules }
+  }
+
   public async store(ctx: HttpContextContract) {
     const storeUserSchema = schema.create({
       email: schema.string({}, [

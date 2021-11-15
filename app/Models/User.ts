@@ -34,6 +34,9 @@ export default class User extends BaseModel {
   @column()
   public guildId: string
 
+  @column()
+  public guildName: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
@@ -64,6 +67,7 @@ export default class User extends BaseModel {
       .filter(({ mentionable }) => mentionable === true)
       .map(({ id, name }) => ({ id, name }))
 
+    user.guildName = guild.name
     user.roles = roles
   }
 

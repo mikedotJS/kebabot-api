@@ -18,7 +18,7 @@
 |
 */
 
-import Route from '@ioc:Adonis/Core/Route'
+import Route from '@ioc:Adonis/Core/Route';
 
 Route.get('/', async () => {
   return { hello: 'world' }
@@ -51,6 +51,7 @@ Route.group(() => {
     index: ['auth'],
     show: ['auth'],
     update: ['auth'],
+    store: [],
   })
   Route.resource('reactionRolesRules', 'ReactionRolesRulesController').middleware({ '*': ['auth'] })
   Route.resource('reactionRoles', 'ReactionRolesController').middleware({ '*': ['auth'] })
